@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/erparks/lology/pkg/riotclient"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -13,7 +15,9 @@ func main() {
 
 	r.Use(cors.Default())
 
-	client := riotclient.New("RGAPI-afdf1a00-6a90-4041-90ae-194933967301", riotclient.NA1)
+	apiKey := initClientConfig()
+
+	client := riotclient.New(apiKey, riotclient.NA1)
 
 	r.GET("/summoner", func(c *gin.Context) {
 
@@ -43,4 +47,16 @@ func main() {
 	})
 
 	r.Run()
+}
+
+func initClientConfig() string {
+	viper.SetConfigName("client")
+	viper.SetConfigType("json")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("fatal error config file: %w", err))
+	}
+
+	return viper.Get("RIOT_API_KEY").(string)
 }
