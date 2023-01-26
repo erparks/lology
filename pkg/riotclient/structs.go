@@ -10,3 +10,64 @@ type SummonerByNameResponse struct {
 }
 
 type MatchesByPUUIDResponse []string
+
+type MatchDTO struct {
+	Metadata MetadataDTO `json:"metadata"`
+	Info     InfoDTO     `json:"info"`
+}
+
+type MetadataDTO struct {
+	DataVersion  string   `json:"dataVersion"`
+	MatchID      string   `json:"matchId"`
+	Participants []string `json:"participants"`
+}
+
+type InfoDTO struct {
+	GameCreation       uint64        `json:"gameCreation"`
+	GameDuration       uint64        `json:"gameDuration"`
+	GameEndTimestamp   uint64        `json:"gameEndTimestamp"`
+	GameID             uint64        `json:"gameId"`
+	GameMode           string        `json:"gameMode"`
+	GameName           string        `json:"gameName"`
+	GameStartTimestamp uint64        `json:"gameStartTimestamp"`
+	GameType           string        `json:"gameType"`
+	GameVersion        string        `json:"gameVersion"`
+	MapId              int           `json:"mapId"`
+	Participants       []Participant `json:"participants"`
+	PlatformID         string        `json:"platformId"`
+	QueueID            int           `json:"queueId"`
+	Teams              []Team        `json:"teams"`
+	TournamentCode     string        `json:"tornamentCode"`
+}
+
+// type Participant struct {
+// 	// TODO
+// }
+
+type Participant map[string]interface{}
+
+type Team struct {
+	Bans       []BanDTO      `json:"bans"`
+	Objectives ObjectivesDTO `json:"objectives"`
+	TeamID     int           `json:"teamId"`
+	Win        bool          `json:"win"`
+}
+
+type BanDTO struct {
+	ChampionID int `json:"championId"`
+	PickTurn   int `json:"pickTurn"`
+}
+
+type ObjectivesDTO struct {
+	Baron      ObjectiveDTO `json:"baron"`
+	Champion   ObjectiveDTO `json:"champion"`
+	Dragon     ObjectiveDTO `json:"dragon"`
+	Inhibitor  ObjectiveDTO `json:"inhibitor"`
+	RiftHerald ObjectiveDTO `json:"riftHerald"`
+	Tower      ObjectiveDTO `json:"tower"`
+}
+
+type ObjectiveDTO struct {
+	First bool `json:"first"`
+	Kills int  `json:"kills"`
+}

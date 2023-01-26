@@ -40,17 +40,33 @@ func (c *Client) SummonerPUUID(name string) (string, error) {
 	}
 
 	json.Unmarshal(bytes, &summoner)
-
 	return summoner.PUUID, nil
 }
 
-func (c *Client) MatchesForSummoner(name string) error {
-	// TODO
+func (c *Client) MatchesBySummonerName(name string) ([]MatchDTO, error) {
+	puuid, err := c.SummonerPUUID(name)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	matchIDs, err := c.matchesByPUUID(puuid)
+	if err != nil {
+		return nil, err
+	}
+
+	var matches []MatchDTO
+	for _, matchID := range matchIDs {
+		match, err := c.matchByID(matchID)
+		if err != nil {
+			return nil, err
+		}
+		matches = append(matches, match)
+	}
+
+	return matches, nil
 }
 
-func (c *Client) MatchesByPUUID(puuid string) (MatchesByPUUIDResponse, error) {
+func (c *Client) matchesByPUUID(puuid string) (MatchesByPUUIDResponse, error) {
 	req, _ := http.NewRequest("GET", "https://"+c.region.Routing()+".api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids", nil)
 	req.Header.Set("X-Riot-Token", c.APIKey)
 
@@ -71,4 +87,28 @@ func (c *Client) MatchesByPUUID(puuid string) (MatchesByPUUIDResponse, error) {
 	fmt.Println("found string:", string(bytes))
 	fmt.Println("found matches:", matchIDs)
 	return matchIDs, nil
+}
+
+func (c *Client) matchByID(matchID string) (MatchDTO, error) {
+	req, _ := http.NewRequest("GET", "https://"+c.region.Routing()+".api.riotgames.com/lol/match/v5/matches/"+matchID, nil)
+	req.Header.Set("X-Riot-Token", c.APIKey)
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return MatchDTO{}, err
+	}
+
+	defer resp.Body.Close()
+
+	match := MatchDTO{}
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return MatchDTO{}, err
+	}
+
+	json.Unmarshal(bytes, &match)
+
+	fmt.Println("match2", match.Info.GameID)
+
+	return match, nil
 }

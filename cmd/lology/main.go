@@ -35,10 +35,19 @@ func main() {
 
 	r.GET("/matches", func(c *gin.Context) {
 
-		matches, err := client.MatchesByPUUID("oTvu-fQH1ES2SPqZVQbOTk1QP2uDttiP0jwDSwgOXOA76BZFWhTFFXk4vebo1FxYrKTX9_9VrnAJvQ")
+		summonerName := c.Query("name")
+		matches, err := client.MatchesBySummonerName(summonerName)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
+
+		for _, match := range matches {
+
+			fmt.Println("match1", match.Info.GameID)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
