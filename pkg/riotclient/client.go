@@ -2,7 +2,6 @@ package riotclient
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -84,8 +83,6 @@ func (c *Client) matchesByPUUID(puuid string) (MatchesByPUUIDResponse, error) {
 
 	matchIDs := make(MatchesByPUUIDResponse, DefaultResponseCount)
 	json.Unmarshal(bytes, &matchIDs)
-	fmt.Println("found string:", string(bytes))
-	fmt.Println("found matches:", matchIDs)
 	return matchIDs, nil
 }
 
@@ -107,8 +104,5 @@ func (c *Client) matchByID(matchID string) (MatchDTO, error) {
 	}
 
 	json.Unmarshal(bytes, &match)
-
-	fmt.Println("match2", match.Info.GameID)
-
 	return match, nil
 }

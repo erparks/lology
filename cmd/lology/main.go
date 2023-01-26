@@ -45,11 +45,6 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		}
 
-		for _, match := range matches {
-
-			fmt.Println("match1", match.Info.GameID)
-		}
-
 		c.JSON(http.StatusOK, gin.H{
 			"matches": matches,
 		})
