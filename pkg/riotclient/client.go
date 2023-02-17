@@ -2,6 +2,7 @@ package riotclient
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,11 +21,24 @@ func New(key string, r Region) *Client {
 	}
 }
 
-func (c *Client) SummonerPUUID(name string) (string, error) {
-	req, _ := http.NewRequest("GET", "https://"+c.region.String()+".api.riotgames.com/lol/summoner/v4/summoners/by-name/"+name, nil)
+func (c *Client) makeReq(method string, url string, body io.Reader) (*http.Response, error) {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+
 	req.Header.Set("X-Riot-Token", c.APIKey)
 
 	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c *Client) SummonerPUUID(name string) (string, error) {
+	resp, err := c.makeReq("GET", "https://"+c.region.String()+".api.riotgames.com/lol/summoner/v4/summoners/by-name/"+name, nil)
 	if err != nil {
 		return "", err
 	}
@@ -66,10 +80,7 @@ func (c *Client) MatchesBySummonerName(name string) ([]MatchDTO, error) {
 }
 
 func (c *Client) matchesByPUUID(puuid string) (MatchesByPUUIDResponse, error) {
-	req, _ := http.NewRequest("GET", "https://"+c.region.Routing()+".api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids", nil)
-	req.Header.Set("X-Riot-Token", c.APIKey)
-
-	resp, err := c.client.Do(req)
+	resp, err := c.makeReq("GET", "https://"+c.region.Routing()+".api.riotgames.com/lol/match/v5/matches/by-puuid/"+puuid+"/ids", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +98,7 @@ func (c *Client) matchesByPUUID(puuid string) (MatchesByPUUIDResponse, error) {
 }
 
 func (c *Client) matchByID(matchID string) (MatchDTO, error) {
-	req, _ := http.NewRequest("GET", "https://"+c.region.Routing()+".api.riotgames.com/lol/match/v5/matches/"+matchID, nil)
-	req.Header.Set("X-Riot-Token", c.APIKey)
-
-	resp, err := c.client.Do(req)
+	resp, err := c.makeReq("GET", "https://"+c.region.Routing()+".api.riotgames.com/lol/match/v5/matches/"+matchID, nil)
 	if err != nil {
 		return MatchDTO{}, err
 	}
