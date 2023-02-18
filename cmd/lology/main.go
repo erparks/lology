@@ -22,14 +22,14 @@ func main() {
 	r.GET("/summoner", func(c *gin.Context) {
 
 		summonerName := c.Query("name")
-		puuid, err := client.SummonerPUUID(summonerName)
+		summoner, err := client.Summoner(summonerName)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"puuid": puuid,
+			"summoner": summoner,
 		})
 	})
 
@@ -41,6 +41,21 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		}
 
+		c.JSON(http.StatusOK, gin.H{
+			"matches": matches,
+		})
+	})
+
+	r.GET("/masteries", func(c *gin.Context) {
+
+		summonerName := c.Query("name")
+
+		summoner, err := client.Summoner(summonerName)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		}
+
+		matches, err := client.ChampionMasteries(summoner.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		}

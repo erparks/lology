@@ -73,3 +73,25 @@ type ObjectiveDTO struct {
 	First bool `json:"first"`
 	Kills int  `json:"kills"`
 }
+
+type ChampionMasteryDTO struct {
+	ChampionPointsUntilNextLevel uint64 `json:"championPointsUntilNextLevel"`
+	ChestGranted                 bool   `json:"chestGranted"`
+	ChampionID                   uint64 `json:"championId"`
+	LastPlayedTime               uint64 `json:"lastPlayedTime"`
+	ChampionLevel                int    `json:"championLevel"`
+	EncryptedSummonerId          string `json:"summonerId"`
+	ChampionPoints               uint64 `json:"championPoints"`
+	ChampionPointsSinceLastLevel uint64 `json:"championPointsSinceLastLevel"`
+	TokensEarned                 uint64 `json:"tokensEarned"`
+}
+
+type Summoner struct {
+	ID            string `json:"id"`
+	AccountID     string `json:"accountId"`
+	ProfileIconID string `json:"profileIconId"`
+	RevisionDate  string `json:"revisionDate"`
+	Name          string `json:"name"`
+	PUUID         string `json:"puuid"`
+	SummonerLevel string `json:"summonerLevel"`
+}
