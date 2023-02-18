@@ -44,6 +44,8 @@ type InfoDTO struct {
 // 	// TODO
 // }
 
+// Participant allows ANY json to be unmarshalled
+// Participant should be replaced with a struct when the time comes to use it
 type Participant map[string]interface{}
 
 type Team struct {
